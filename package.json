@@ -29,8 +29,7 @@
     "gulp-nsp": "^2.1.0"
   },
   "scripts": {
-    "prepublish": "gulp prepublish",
-    "test": "gulp"
+    "test": "echo"
   },
   "license": "MIT",
   "dependencies": {
