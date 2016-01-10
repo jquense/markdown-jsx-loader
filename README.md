@@ -11,9 +11,7 @@ $ npm install --save markdown-jsx-loader
 ## Usage
 
 ```js
-var markdownJsxLoader = require('markdown-jsx-loader');
-
-markdownJsxLoader('Rainbow');
+{ loader: 'markdown-jsx', test: /\.jsx\.md$/ }
 ```
 ## License
 

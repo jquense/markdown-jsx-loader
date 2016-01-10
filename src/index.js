@@ -49,5 +49,7 @@ module.exports = function(contents) {
 
   return render(marked(contents, {
     renderer: new Renderer()
-  }, this.resourcePath, options)
-};
+  }), this.resourcePath, options)
+}
+
+module.exports.Renderer = Renderer
