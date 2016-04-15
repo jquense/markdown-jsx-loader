@@ -1,6 +1,4 @@
 'use strict';
-var metadata = require('react-component-metadata');
-var loaderUtils = require('loader-utils');
 var fs = require('fs');
 var path = require('path');
 var marked = require('marked');
