@@ -6,6 +6,7 @@ const path = require('path');
 const Renderer = require('./JsxRenderer');
 
 marked.setOptions({
+  xhtml: true,
   highlight: function(code, lang) {
     const prism = require('./prism-jsx');
     lang = lang && lang.indexOf('language-') === 0 ? lang.replace('language-', '') : lang;
