@@ -1,20 +1,19 @@
-'use strict';
-
-var assert = require('assert');
-var markdownJsxLoader = require('../src');
-var fs = require('fs')
+import assert from 'assert';
+import fs from 'fs';
+import markdownJsxLoader from '../src';
 
 let read = () => fs.readFileSync(__dirname + '/test-file.md', 'utf8')
 
 describe('markdown-jsx-loader', function () {
   let contents = read();
 
-  let context
+  let context;
 
   beforeEach(() => context = {
     resourcePath: __dirname + '/test-file.md',
-    options: {},
-    cacheable: ()=>{}
+    loaderIndex: 0,
+    query: {},
+    cacheable: () => {}
   })
 
   it('should not break', function () {
@@ -22,18 +21,20 @@ describe('markdown-jsx-loader', function () {
   });
 
   it('should use file as displayName', function () {
-    assert.ok(markdownJsxLoader.call(context, contents)
-      .match(/displayName\: 'TestFile'/gm)
+    assert.ok(markdownJsxLoader
+      .call(context, contents)
+      .match(/module\.exports\.displayName = 'TestFile';/gm)
     );
   });
 
   it('should use pre and post ambles', function () {
-    context.options.markdownJsxLoader = {
-      preamble: "// preample!!!",
-      postamble: "// postamble!!!"
-    }
+    const options = {
+      preamble: '// preample!!!',
+      postamble: '// postamble!!!'
+    };
+    context.query = options;
 
-    let results =  markdownJsxLoader.call(context, contents)
+    const results =  markdownJsxLoader.call(context, contents)
 
     assert.ok(results.match(/preample/gm));
     assert.ok(results.match(/postamble/gm));
