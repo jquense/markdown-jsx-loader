@@ -1,53 +1,44 @@
-'use strict';
-var fs = require('fs');
-var path = require('path');
-var marked = require('marked');
-var setCase = require('case')
-var Renderer = require('./JsxRenderer');
+const setCase = require('case');
+const fs = require('fs');
+const loaderUtils = require('loader-utils');
+const marked = require('marked');
+const path = require('path');
+const Renderer = require('./JsxRenderer');
 
 marked.setOptions({
-  xhtml: true,
   highlight: function(code, lang) {
-    let prism = require('./prism-jsx');
+    const prism = require('./prism-jsx');
     lang = lang && lang.indexOf('language-') === 0 ? lang.replace('language-', '') : lang;
     return prism.highlight(code, prism.languages[lang]);
   }
 });
 
-function defaultRender(contents, resourcePath, options) {
-  let prefix = setCase.pascal(path.basename(resourcePath, '.md').toLowerCase() + '/');
+const defaultRender = (contents, resourcePath, options) => {
+  const prefix = setCase.pascal(path.basename(resourcePath, '.md').toLowerCase() + '/');
 
   return `
 var React = require('react');
 ${options.preamble || ''}
 
-module.exports = React.createClass({
-  displayName: '${prefix}',
-  render: function() {
-    return (
-      <div {...this.props}>
-        ${contents}
-      </div>
-    )
- }
+module.exports = function () {
+  return (<div>${contents}</div>)
 });
+
+module.exports.displayName = '${prefix}';
 
 ${options.postamble || ''}
 `;
-}
+};
 
 module.exports = function(contents) {
-  var options = this.options.markdownJsxLoader || {}
+  const options = loaderUtils.getOptions(this) || {};
 
   this.cacheable();
 
-  Renderer = options.renderer || this.options.renderer || Renderer;
+  const renderer = options.renderer || new Renderer();
+  const render = options.render || defaultRender;
 
-  var render = options.render || defaultRender
-
-  return render(marked(contents, {
-    renderer: new Renderer()
-  }), this.resourcePath, options)
+  return render(marked(contents, { renderer }), this.resourcePath, options)
 }
 
 module.exports.Renderer = Renderer
