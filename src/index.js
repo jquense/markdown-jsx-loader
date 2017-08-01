@@ -1,5 +1,3 @@
-'use strict';
-
 const setCase = require('case');
 const fs = require('fs');
 const loaderUtils = require('loader-utils');
@@ -15,7 +13,7 @@ marked.setOptions({
   }
 });
 
-function defaultRender(contents, resourcePath, options) {
+const defaultRender = (contents, resourcePath, options) => {
   const prefix = setCase.pascal(path.basename(resourcePath, '.md').toLowerCase() + '/');
 
   return `
@@ -30,7 +28,7 @@ module.exports.displayName = '${prefix}';
 
 ${options.postamble || ''}
 `;
-}
+};
 
 module.exports = function(contents) {
   const options = loaderUtils.getOptions(this) || {};
