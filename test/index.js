@@ -34,9 +34,40 @@ describe('markdown-jsx-loader', function () {
     };
     context.query = options;
 
-    const results =  markdownJsxLoader.call(context, contents)
+    const results =  markdownJsxLoader.call(context, contents);
 
     assert.ok(results.match(/preample/gm));
     assert.ok(results.match(/postamble/gm));
+  });
+
+  it('should use customized marked renderer', function () {
+    const mdRenderer = new markdownJsxLoader.Renderer();
+    mdRenderer.heading = (text, level) => {
+      return `
+<h${level + 1}><span className='testing'>${text}</span></h${level + 1}>
+      `;
+    };
+
+    context.query = {
+      renderer: mdRenderer
+    };
+
+    const results = markdownJsxLoader.call(context, contents);
+
+    assert.ok(results.match(/className='testing'/gm));
+  });
+
+  it('should use custom JSX renderer', function () {
+    const jsxRenderer = contents => (`
+import React from 'react';
+export default () => (<div>${contents}</div>);`);
+
+    context.query = {
+      render: jsxRenderer
+    };
+
+    const results = markdownJsxLoader.call(context, contents);
+
+    assert.ok(results.match(/export default \(\) => \(<div>/gm));
   });
 });
