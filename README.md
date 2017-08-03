@@ -88,6 +88,36 @@ return {
 }
 ```
 
+### Notes
+
+**HTML elements in Markdown:**
+
+GitHub-flavored Markdown supports HTML elements, which can feature the `align` attribute. Unfortunately [JSX does not support `align`](https://facebook.github.io/react/docs/dom-elements.html#all-supported-html-attributes) and will throw a warning. You can either ignore the warning or customize the marked render to remove `align`. E.g.:
+
+```javascript
+// webpack.config.js 
+
+const marked = require('marked');
+const mdRenderer = new marked.Renderer();
+
+mdRenderer.html = html =>
+  mdRenderer.constructor.prototype.html(
+    html.replace(/align=("|')[^"']*("|')/g, '')
+  );
+
+// (*) See note below.
+mdRenderer.paragraph = paragraph =>
+  mdRenderer.constructor.prototype.paragraph(
+    paragraph.replace(/align=("|')[^"']*("|')/g, '')
+  );
+
+...
+```
+
+_Note:_ Marked is not perfect and seems to contain some bugs. One of them unfortunately is that HTML tags like `a` are not recognized as HTML but instead as a _paragraph_, therefore we have to add the `align`-replacer to both, _html_ and _paragraph_, transform functions.
+
+You might run into more issues such as missing `tbody` elements when having custom HTML tables. It's therefore wise to keep the use of custom HTML elements to a minimum if possible.
+
 ## License
 
 MIT © [Jason Quense &lt;monastic.panic@gmail.com&gt;]()
