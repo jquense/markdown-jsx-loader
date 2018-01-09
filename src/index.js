@@ -23,7 +23,7 @@ ${options.preamble || ''}
 
 module.exports = function () {
   return (<div>${contents}</div>)
-});
+};
 
 module.exports.displayName = '${prefix}';
 
